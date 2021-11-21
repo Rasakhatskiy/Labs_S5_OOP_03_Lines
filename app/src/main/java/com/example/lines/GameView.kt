@@ -7,10 +7,12 @@ import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 
-class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes), SurfaceHolder.Callback {
+class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context, attributes),
+    SurfaceHolder.Callback {
     private val thread: GameThread
 
     private var ball: Ball? = null
+    private var field: Field? = null
 
     init {
 
@@ -34,11 +36,14 @@ class GameView(context: Context, attributes: AttributeSet) : SurfaceView(context
      */
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+        field!!.draw(canvas)
         ball!!.draw(canvas)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        ball =Ball(BitmapFactory.decodeResource(resources, R.drawable.ball))
+        ball = Ball(BitmapFactory.decodeResource(resources, R.drawable.ball))
+        field = Field(BitmapFactory.decodeResource(resources, R.drawable.battlefield))
+
 
         //To change body of created functions use File | Settings | File Templates.
         // start the game thread

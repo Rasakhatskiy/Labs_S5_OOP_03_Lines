@@ -16,8 +16,8 @@ class Ball(var image: Bitmap) {
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels
 
     init {
-        w = image.width / 10
-        h = image.height / 10
+        w = image.width
+        h = image.height
 
         x = screenWidth / 2
         y = screenHeight / 2
