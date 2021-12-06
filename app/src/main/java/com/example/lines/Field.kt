@@ -15,10 +15,11 @@ class Field(var image: Bitmap) {
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels
 
+    val aspect: Double = image.width.toDouble() / image.height.toDouble()
+    val cellSize: Int = screenWidth / 8
+
+
     init {
-
-        var aspect: Double = image.width.toDouble() / image.height.toDouble()
-
         image = Bitmap.createScaledBitmap(image, screenWidth, (screenWidth / aspect).toInt(), false);
 
         w = image.width
@@ -32,4 +33,5 @@ class Field(var image: Bitmap) {
     fun draw(canvas: Canvas) {
         canvas.drawBitmap(image, x.toFloat(), y.toFloat(), null)
     }
+
 }
