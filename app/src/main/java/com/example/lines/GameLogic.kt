@@ -14,6 +14,12 @@ class BallSlot(
     public var ball: Ball? = null
 }
 
+class SlotCoord(
+    public val slot: BallSlot,
+    public val x: Int,
+    public val y: Int
+)
+
 /**
  * Main logic of the game here
  */
@@ -26,6 +32,9 @@ class GameLogic(
     val numberBallsToGen = 3
 
     var selectedSlot: BallSlot? = null
+    var selectedX: Int = 0
+    var selectedY: Int = 0
+
 
     var toRegenSprites = false
 
@@ -36,13 +45,6 @@ class GameLogic(
         }
     }
 
-    // generate 1 ball in random position, without sprites
-    fun genRandBallSingle(x: Int, y: Int) {
-        val colorInt = (0..4).random()
-        if (ballMap[x][y].color == BallColor.None) {
-            ballMap[x][y].color = BallColor.fromInt(colorInt)
-        }
-    }
 
     // generate n balls in random positions, without sprites
     fun genRandBall(_n: Int) {
@@ -74,6 +76,11 @@ class GameLogic(
         return false
     }
 
+    fun canGoTo(fromX: Int, fromY: Int, toX: Int, toY: Int): Boolean {
+        val bfs = BFS(ballMap)
+        return bfs.checkPath(fromX, fromY, toX, toY)
+    }
+
     /**
      * Returns sprites of all existing balls
      */
@@ -94,7 +101,7 @@ class GameLogic(
     /**
      * Returns cell on the game field with color and sprite
      */
-    fun getFieldSlot(touchX: Int, touchY: Int): BallSlot? {
+    fun getFieldSlot(touchX: Int, touchY: Int): SlotCoord? {
         val x = touchX / cellSize
         val y = touchY / cellSize
 
@@ -107,7 +114,7 @@ class GameLogic(
             println("error x:${x}, y:${y}")
             return null
         }
-        return ballMap[x][y]
+        return SlotCoord(ballMap[x][y], x, y)
     }
 
 
@@ -188,11 +195,16 @@ class GameLogic(
 
         // Someone touched screen.
         if (touched) {
-            var slot = getFieldSlot(touchX, touchY)
+            val slotCoord = getFieldSlot(touchX, touchY)
+
 
 
             // Was field touched?
-            if (slot != null) {
+            if (slotCoord != null) {
+
+                var slot = slotCoord.slot
+                var toX = slotCoord.x
+                var toY = slotCoord.y
 
 
                 // If selected empty field &
@@ -201,8 +213,10 @@ class GameLogic(
                     // If ball is already selected
                     // Move ball
                     // todo pathfind
-                    if (selectedSlot != null) {
 
+                    if (selectedSlot != null &&
+                        canGoTo(selectedX, selectedY, toX, toY)
+                    ) {
                         slot.color = selectedSlot!!.color
                         slot.ball = selectedSlot!!.ball
                         slot.ball!!.teleport(touchX / cellSize, touchY / cellSize)
@@ -230,8 +244,8 @@ class GameLogic(
                     }
                     slot.ball!!.isSelected = true
                     selectedSlot = slot
-
-
+                    selectedX = toX
+                    selectedY = toY
                 }
 
             }
