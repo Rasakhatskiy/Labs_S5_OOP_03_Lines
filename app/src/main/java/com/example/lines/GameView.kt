@@ -1,12 +1,14 @@
 package com.example.lines
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import kotlin.random.Random
 
 /**
  * Main game view.
@@ -49,23 +51,74 @@ class GameView(
         initBallsSprites()
     }
 
+
+
+
     /**
      * Inits ball sprites
      */
-    // todo different colors
     fun initBallsSprites() {
+        val images = listOf(
+            R.drawable.ball_red,
+            R.drawable.ball_blue,
+            R.drawable.ball_brown,
+            R.drawable.ball_green,
+            R.drawable.ball_yellow
+        )
+
         for (i in 0 until logic.maxHorCells) {
             for (j in 0 until logic.maxVerCells) {
                 if (logic.ballMap[i][j].ball != null) {
                     continue
                 }
-                logic.ballMap[i][j].ball = Ball(
-                    BitmapFactory.decodeResource(resources, R.drawable.ball),
-                    logic.ballMap[i][j].color,
-                    i,
-                    j,
-                    cellSizePx
-                )
+                if (logic.ballMap[i][j].color == BallColor.Red) {
+                    logic.ballMap[i][j].ball = Ball(
+                        BitmapFactory.decodeResource(resources, R.drawable.ball_red),
+                        logic.ballMap[i][j].color,
+                        i,
+                        j,
+                        cellSizePx
+                    )
+                }
+                if (logic.ballMap[i][j].color == BallColor.Yellow) {
+                    logic.ballMap[i][j].ball = Ball(
+                        BitmapFactory.decodeResource(resources, R.drawable.ball_yellow),
+                        logic.ballMap[i][j].color,
+                        i,
+                        j,
+                        cellSizePx
+                    )
+                }
+                if (logic.ballMap[i][j].color == BallColor.Blue) {
+                    logic.ballMap[i][j].ball = Ball(
+                        BitmapFactory.decodeResource(resources, R.drawable.ball_blue),
+                        logic.ballMap[i][j].color,
+                        i,
+                        j,
+                        cellSizePx
+                    )
+                }
+                if (logic.ballMap[i][j].color == BallColor.Brown) {
+                    logic.ballMap[i][j].ball = Ball(
+                        BitmapFactory.decodeResource(resources, R.drawable.ball_brown),
+                        logic.ballMap[i][j].color,
+                        i,
+                        j,
+                        cellSizePx
+                    )
+                }
+                if (logic.ballMap[i][j].color == BallColor.Green) {
+                    logic.ballMap[i][j].ball = Ball(
+                        BitmapFactory.decodeResource(resources, R.drawable.ball_green),
+                        logic.ballMap[i][j].color,
+                        i,
+                        j,
+                        cellSizePx
+                    )
+                }
+
+
+
             }
         }
         ballList = logic.getBallsSprites()
