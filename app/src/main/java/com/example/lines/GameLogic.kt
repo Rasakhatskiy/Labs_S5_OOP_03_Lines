@@ -8,7 +8,7 @@ import kotlin.random.Random
  */
 class BallSlot(
     // Logical color
-    public var color: BallColor = BallColor.Red,
+    public var color: BallColor = BallColor.Red
 ) {
     // Sprite
     public var ball: Ball? = null
@@ -23,7 +23,7 @@ class GameLogic(
     // field size 8x14
     val maxHorCells: Int = 8
     val maxVerCells: Int = 14
-    val numberBallsToGen = 10
+    val numberBallsToGen = 3
 
     var selectedSlot: BallSlot? = null
 
@@ -36,18 +36,26 @@ class GameLogic(
         }
     }
 
+    // generate 1 ball in random position, without sprites
+    fun genRandBallSingle(x: Int, y: Int) {
+        val colorInt = (0..4).random()
+        if (ballMap[x][y].color == BallColor.None) {
+            ballMap[x][y].color = BallColor.fromInt(colorInt)
+        }
+    }
+
     // generate n balls in random positions, without sprites
     fun genRandBall(_n: Int) {
         var n = _n
-        val colorInt = Random.nextInt(0, BallColor.None.ordinal)
         while (n > 0) {
             val w = Random.nextInt(0, maxHorCells)
             val h = Random.nextInt(0, maxVerCells)
             if (ballMap[w][h].color == BallColor.None) {
-                ballMap[w][h].color = BallColor.fromInt(colorInt)
+                genRandBallSingle(w, h)
                 n--
             }
         }
+
     }
 
     // check left free space on field
@@ -102,17 +110,90 @@ class GameLogic(
         return ballMap[x][y]
     }
 
+
+    fun deleteBall(X: Int, Y: Int) {
+        if (X < 0 ||
+            X >= maxHorCells ||
+            X < 0 ||
+            X >= maxVerCells
+        ) {
+            println("error x:${X}, y:${Y}")
+        } else {
+            ballMap[X][Y].color = BallColor.None
+            ballMap[X][Y].ball = null
+        }
+    }
+
+
+    private fun checkDeleteVertical():Boolean {
+
+        for (i in 0 until maxHorCells) {
+            for (j in 0 until maxVerCells-4) {
+                if (ballMap[i][j].color != BallColor.None) {
+                    if (ballMap[i][j].color == ballMap[i][j + 4].color) {
+                        if (ballMap[i][j].color == ballMap[i][j + 3].color) {
+                            if (ballMap[i][j].color == ballMap[i][j + 2].color) {
+                                if (ballMap[i][j].color == ballMap[i][j + 1].color) {
+                                    deleteBall(i, j)
+                                    deleteBall(i, j + 1)
+                                    deleteBall(i, j + 2)
+                                    deleteBall(i, j + 3)
+                                    deleteBall(i, j + 4)
+                                    return false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+
+
+
+    fun checkDeleteHorizontal():Boolean {
+        for (j in 0 until maxVerCells) {
+            for (i in 0 until maxHorCells-4) {
+                if (ballMap[i][j].color != BallColor.None) {
+                    if (ballMap[i][j].color == ballMap[i + 4][j].color) {
+                        if (ballMap[i][j].color == ballMap[i + 3][j].color) {
+                            if (ballMap[i][j].color == ballMap[i + 2][j].color) {
+                                if (ballMap[i][j].color == ballMap[i + 1][j].color) {
+                                    deleteBall(i + 4, j)
+                                    deleteBall(i + 3, j)
+                                    deleteBall(i + 2, j)
+                                    deleteBall(i + 1, j)
+                                    deleteBall(i, j)
+                                    return false
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+
     fun update(
         touched: Boolean,
         touchX: Int,
         touchY: Int,
     ) {
+
+
         // Someone touched screen.
         if (touched) {
             var slot = getFieldSlot(touchX, touchY)
 
+
             // Was field touched?
             if (slot != null) {
+
 
                 // If selected empty field &
                 if (slot.color == BallColor.None) {
@@ -121,6 +202,7 @@ class GameLogic(
                     // Move ball
                     // todo pathfind
                     if (selectedSlot != null) {
+
                         slot.color = selectedSlot!!.color
                         slot.ball = selectedSlot!!.ball
                         slot.ball!!.teleport(touchX / cellSize, touchY / cellSize)
@@ -131,9 +213,16 @@ class GameLogic(
 
 
                         if (checkFreeSpace(numberBallsToGen)) {
-                            genRandBall(numberBallsToGen)
+                            if (checkDeleteVertical() == true||checkDeleteHorizontal()||true){
+                                genRandBall(numberBallsToGen)
+                            }
+
                             toRegenSprites = true
+
+                            checkDeleteVertical()
+                            checkDeleteHorizontal()
                         }
+
                     }
                 } else { // Ball was selected
                     if (selectedSlot != null) {
@@ -141,7 +230,10 @@ class GameLogic(
                     }
                     slot.ball!!.isSelected = true
                     selectedSlot = slot
+
+
                 }
+
             }
         }
 
