@@ -125,7 +125,7 @@ class GameView(
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         //To change body of created functions use File | Settings | File Templates.
-        //TODO("Not yet implemented")
+        // ("Not yet implemented")
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {

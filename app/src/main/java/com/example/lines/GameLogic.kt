@@ -119,6 +119,8 @@ class GameLogic(
                         slot.ball = selectedSlot!!.ball
                         slot.ball!!.teleport(touchX / cellSize, touchY / cellSize)
                         slot.ball!!.isSelected = false
+                        selectedSlot!!.color = BallColor.None
+                        selectedSlot!!.ball = null
                         selectedSlot = null
                     }
                 } else { // Ball was selected
