@@ -47,7 +47,6 @@ class GameView(
         logic = GameLogic(cellSizePx)
         logic.genRandBall(5)
         initBallsSprites()
-        ballList = logic.getBallsSprites()
     }
 
     /**
@@ -57,6 +56,9 @@ class GameView(
     fun initBallsSprites() {
         for (i in 0 until logic.maxHorCells) {
             for (j in 0 until logic.maxVerCells) {
+                if (logic.ballMap[i][j].ball != null) {
+                    continue
+                }
                 logic.ballMap[i][j].ball = Ball(
                     BitmapFactory.decodeResource(resources, R.drawable.ball),
                     logic.ballMap[i][j].color,
@@ -66,6 +68,7 @@ class GameView(
                 )
             }
         }
+        ballList = logic.getBallsSprites()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -93,6 +96,11 @@ class GameView(
      */
     fun update() {
         logic.update(touched, touchedX, touchedY)
+
+        if (logic.toRegenSprites) {
+            initBallsSprites()
+            logic.toRegenSprites = false
+        }
 
         for (ball in ballList) {
             ball.update()

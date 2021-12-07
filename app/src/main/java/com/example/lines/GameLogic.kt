@@ -23,9 +23,11 @@ class GameLogic(
     // field size 8x14
     val maxHorCells: Int = 8
     val maxVerCells: Int = 14
+    val numberBallsToGen = 10
 
     var selectedSlot: BallSlot? = null
 
+    var toRegenSprites = false
 
     // init game field with empty cells
     var ballMap: Array<Array<BallSlot>> = Array(maxHorCells) {
@@ -49,10 +51,14 @@ class GameLogic(
     }
 
     // check left free space on field
-    fun checkFreeSpace(): Boolean {
+    fun checkFreeSpace(n: Int): Boolean {
+        var free: Int = 0
         for (row in ballMap) {
             for (slot in row) {
                 if (slot.color == BallColor.None) {
+                    free++
+                }
+                if (free >= n) {
                     return true
                 }
             }
@@ -122,6 +128,12 @@ class GameLogic(
                         selectedSlot!!.color = BallColor.None
                         selectedSlot!!.ball = null
                         selectedSlot = null
+
+
+                        if (checkFreeSpace(numberBallsToGen)) {
+                            genRandBall(numberBallsToGen)
+                            toRegenSprites = true
+                        }
                     }
                 } else { // Ball was selected
                     if (selectedSlot != null) {
