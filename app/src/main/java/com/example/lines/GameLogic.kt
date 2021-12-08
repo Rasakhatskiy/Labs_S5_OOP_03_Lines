@@ -45,6 +45,13 @@ class GameLogic(
         }
     }
 
+    // generate 1 ball in random position, without sprites
+    fun genRandBallSingle(x: Int, y: Int) {
+        val colorInt = (0..4).random()
+        if (ballMap[x][y].color == BallColor.None) {
+            ballMap[x][y].color = BallColor.fromInt(colorInt)
+        }
+    }
 
     // generate n balls in random positions, without sprites
     fun genRandBall(_n: Int) {
