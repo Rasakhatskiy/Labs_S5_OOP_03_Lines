@@ -219,7 +219,6 @@ class GameLogic(
 
                     // If ball is already selected
                     // Move ball
-                    // todo pathfind
 
                     if (selectedSlot != null &&
                         canGoTo(selectedX, selectedY, toX, toY)
